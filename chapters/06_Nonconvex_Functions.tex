@@ -1,0 +1,6 @@
+\section{Nonconvex Functions}
+\Title{Smooth functions}
+A function $f$ is called \textbf{concave} if $-f$ is convex. Every concave function is smooth with parameter $L=0$. \\
+\textbf{Alternative caracterisation of smoothness}: Let $f : \dom(f) \rightarrow \R$ be twice differentiable, with $X \subset \R^d$ a convex set and $\norm{\nabla^2 f(\xx)} \leq L$ for all $\xx \in X$, then $f$ is smooth with parameter $L$ over $X$. 
+\textbf{Converse}: If f is smooth over an \textit{open} convex subset $X \subset \dom(f)$, it has bounded Hessians over $X$. \\
+\textbf{Theorem}: Let $f : \R^d \rightarrow \R$ be differentiable with global minimum $\xx^*$, furthermore suppose that $f$ is smooth with parameter $L$. Choosing stepsize $\gamma = \frac{1}{L}$ gradient descent will yield: $\frac{1}{T}\sum_{t=0}^{T-1}{\norm{\nabla f(\xx_t)}^2}\leq \frac{2L}{T}(f(\xx_0) - f(\xx^*))$. In particular $\norm{\nabla f(\xx_t)}^2 \leq \frac{2L}{T}(f(\xx_0) - f(\xx^*))$ for some $t \in \{0, \dots, T-1\}$, and $\lim_{t \rightarrow \infty}{\norm{\nabla f(\xx_t)}^2}=0$. Trick: Use sufficient decrease. \\

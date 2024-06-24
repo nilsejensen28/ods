@@ -1,0 +1,61 @@
+\section{Subgradient Methods}
+\Title{Definitions and first facts}
+\begin{framed}
+    Let $f : \dom(f) \rightarrow \R \cup \{+\infty\}$ be a convex function. A vector $\vecg \in \R^d$ is a \textbf{subgradient} of $f$ at a point $\xx \in \dom(f)$ if $f(\yy) \geq f(\xx) + \vecg^T (\yy - \xx), \forall \yy \in \dom(f)$. The set of all subgradient at $\xx$ is called the \textbf{subdifferential} of $f$ as $\xx$ denoted as $\partial f$.
+\end{framed}
+If $f$ is convex and differentiable at $\xx \in \dom(f)$ then $\partial f(\xx) = \{ \nabla f(\xx)\}$ \\
+If $f$ is differentiable at $\xx \in \dom(f)$, then $\partial f(\xx) \subset \{ \nabla f(\xx)\}$ \\
+\textbf{Lemma}: Let $f: \dom(f) \rightarrow \R$ be convex, $\dom(f)$ open and $B \in \R_{+}$, then the following are equivalent:
+\begin{enumerate}[label=(\roman*)]    
+    \itemsep0em
+    \item $\norm{\vecg} \leq B$ for all $\xx \in \dom(f)$ and $\vecg \in \partial f(\xx)$ \\
+    \item  $\abs{f(\xx) - f(\yy)} \leq B \norm{\xx - \yy}$ for all $\xx, \yy \in \dom(f)$.
+\end{enumerate}
+\textbf{Lemma}: Suppose that $f : \dom(f) \rightarrow \R$ and $\xx \in \dom(f)$. If $0 \in \partial f(\xx)$, then $\xx$ is a global minimum. \\
+\Title{Properties}
+\textbf{Lemma}: Let $f$ be a convex function and $\xx \in \dom(f)$. Then $\partial f(\xx)$ is convex and closed. \\
+The \textbf{relative interior} of set $X$ is defined as $\relint(X) = \{\xx : \exists r > 0, \text{such that } B(\xx, r) \cap \mathrm{Aff}(X) \subset X\}$, which is the set of interior points relative to the affine subspaces that contain $X$. \\
+\textbf{Hyperplane separation theorem}: Let $S$ and $T$ be two nonempty convex sets. Then $S$ and $T$ can be separated if and only if $\relint(S) \cap \relint(T) = \emptyset$. \\
+\textbf{Corrolary}: Let $S$ be a nonempty convex set $\xx_0 \in \partial S$ (boundary of $S$). There exists a supporting hyperplane $H = \{\xx : \veca^T \xx = \veca^T \xx_0\}$, with $\veca \neq 0$ such that: $S \subset \{ \xx : \veca^T \xx \leq \veca^T \xx_0\}$ and $\xx_0  \in H$. \\
+\textbf{Theorem (Existence of subgradient)}: Lef $f$ be a convex function. Then $\partial f(\xx)$ is nonempty and bounded if $\xx \in \relint(\dom(f))$. \\
+\textbf{Lemma}: Let $f : \dom(f) \rightarrow \R$ be a function such that $\dom(f)$ is convex and $\partial f(\xx) \neq \emptyset$ for all $\xx \in \dom(f)$. Then $f$ is convex. \\
+\textbf{Lemma (Monotonicity of sub-differential)}: The subdifferential of a convex function $f(\xx)$ at $\xx \in \dom(f)$ is a monotone operator, i.e: $(\uu - \vv)^T (\xx - \yy) \geq 0$, $\forall \xx, \yy \in \dom(f), \uu \in \partial f(\xx), \vv \in \partial f(\yy)$. \\
+The \textbf{directional derivative} of a function $f$ at $\xx$ along $\vecd$ is $f'(\xx, \vecd) = \lim_{\delta \rightarrow 0^{+}}{\frac{f(\xx + \delta \vecd) - f(\xx)} {\delta}}$. If $f$ is differentiable then $f'(\xx, \vecd) = \nabla f(\xx)^T \vecd$. \\
+\textbf{Lemma}: If $f$ is convex then the ratio $\phi(\delta) = \frac{f(\xx + \delta \vecd) - f(\xx)} {\delta}$ is non-decreasing in $\delta > 0$. \\
+\textbf{Theorem}: Let $f$ be convex and $\yy \in \mathrm{int}(\dom(f))$, then: $f'(\xx, \dd) = \max_{\vecg \in \partial f(\xx)}{\vecg^T \vecd}$. \\
+\begin{framed}
+    Determining the subdifferentiable set of a convex function at a given point is in general very difficult. The following calculus of subdifferentiable sets provides a constructive way to compute the subgradient of convex functions arising from convexity-preserving operators.
+    \begin{enumerate}[label=(\roman*), topsep=0pt,itemsep=0ex,partopsep=0ex,parsep=0ex]   
+        \itemsep0em
+        \item \textbf{Taking conic combination}: If $h(\xx) = \lambda f(\xx) + \mu g(\xx)$, where $\lambda, \mu \geq 0$ and $f$ and $g$ are both convex then: $\partial h(\xx) = \lambda \partial f(\xx) + \mu \partial g(\xx)$, $\forall \xx \in \mathrm{int}(\dom(h))$. 
+        \item \textbf{Taking affine composition}: If $h(\xx) = f(A\xx + \bb)$, where $f$ is convex then $\partial h(\xx) = A^T \partial f(A\xx +\bb)$. 
+        \item \textbf{Taking supremum}: If $h(\xx) = \sup_{\alpha \in \mathcal{A}}{f_{\alpha}(\xx)}$ and each $f_{\alpha}(\xx)$ is convex then: $\partial h(\xx) \supseteq \conv \{ \partial f_{\alpha}(\xx) : \alpha \in \alpha(\xx)\}$ with $\alpha(\xx) := \{ \alpha : h(\xx) = f_{\alpha}(\xx)\}$. 
+        \item \textbf{Taking superposition}: If $h(\xx) = F(f_1(\xx), \dots, f_m(\xx))$, where $F(\yy_1, \dots, \yy_m)$ is non-decreasing and convex, then: $\partial h(\xx) \supseteq \left\{ \sum_{i=1}^m{d_i \partial f_i(\xx)} : (d_1, \dots, d_m) \in \partial F(y_1, \dots, y_m) \right\}$.
+    \end{enumerate}
+\end{framed}
+\Title{Subgradient Method}
+Consider the generic optimization problem $\min f(\xx)$ such that $\xx \in X$, where $f$ is convex (possibly non differentiable) and $X \subseteq \dom(f)$ is closed and convex. Assume the problem is solvable with optimal solution $x^*, f^*$. We define two important quantities:
+\begin{enumerate}[label=(\roman*), topsep=0pt,itemsep=0ex,partopsep=0ex,parsep=0ex]
+    \itemsep0em
+    \item $R^2 := \max_{\xx, \yy \in X}{\norm{\xx - \yy}^2}$, the \textbf{squared diameter} of $X$
+    \item $B := \sup_{\xx, \yy \in X}{\frac{\abs{f(\xx) - f(\yy)}}{\norm{\xx - \yy}_2}} < \infty$ is the constant that characterizes Lipschiz continuity of $f$ under $\norm{\cdot}_2$.
+\end{enumerate}
+\begin{framed}
+    The subgradient method initializes $\xx_1 \in X$ and repeats the following step $\xx_{t+1}= \Pi_X(\xx_t - \gamma_t \vecg_t)$ with $\vecg_t \in \partial f(\xx_t)$.
+\end{framed}
+When $f$ is differentiable this reduces to the projected gradient descent method. Note that unlike Gradient Descent, Subgradient Descent is not a descent method, i.e., moving along the negative direction of subgradient is not necessarily decreasing the objective function.
+\textbf{Convergence of subgradient descent}: Assume $f$ is convex, then Subgradient Descent satisfies $\min_{1 \leq t \leq T}{f(x_t) - f^*} \leq \left(\sum_{t=1}^T{\gamma_t}\right)^{-1}\left(\frac{1}{2}\norm{\xx_1 - \xx^*}_2^2 +\frac{1}{2}\sum_{t=1}^T{\gamma_t^2 \norm{\vecg}_2^2} \right)$, and for $\hat{\xx_T} = \left(\sum_{t=1}^T{\gamma_t} \right)^{-1} \left(\sum_{t=1}^T \gamma_t \xx_t \right) \in X$ we have $f(\hat{\xx_T}) - f^* \leq \left(\sum_{t=1}^T{\gamma_t}\right)^{-1}\left(\frac{1}{2}\norm{\xx_1 - \xx^*}_2^2 +\frac{1}{2}\sum_{t=1}^T{\gamma_t^2 \norm{\vecg}_2^2} \right)$
+\textbf{Corrolary}: Using $B$ and $R$ we get: $\min_{T_0 \leq t \leq T}{f(\xx_t) - f^*} \leq \frac{0.5 \cdot R^2 + 0.5 \cdot \sum_{t=T_0}^T{\gamma_t^2 B^2}}{\sum_{t=T_0}^T{\gamma_t}}$, $\forall 1 \leq T_0 \leq T$. \\
+\textbf{Stepsizes}: We define the following stepsizes:
+\begin{enumerate}[label=(\roman*), topsep=0pt,itemsep=0ex,partopsep=0ex,parsep=0ex]    
+    \itemsep0em
+    \item Constant stepsize $\gamma_t = \gamma > 0$
+    \item Scaled stepsize $\gamma_t = \frac{\gamma}{\norm{\vecg_t}_2}$.
+    \item Non-summable but diminishing stepsize satisfying: $\sum_{t=1}^{\infty}{\gamma_t} = \infty$, $\lim_{t \rightarrow \infty}{\gamma_t} = 0$.
+    \item Non-summable but square-summable stepsize satisfying: $\sum_{t=1}^{\infty}{\gamma_t} = \infty$, but $\sum_{t=1}^{\infty}{\gamma_t^2} < \infty$.
+    \item Polyak stepsize: Assuming $f^* = f(\xx^*)$ is known choose: $\gamma_t = \frac{f(\xx_t) - f^*}{\norm{\vecg_t}_2^2}$.
+\end{enumerate}
+For convex functions, subgradient descent will always converge with the stepsizes above. In case \textit{(i)} with $\gamma_t = \frac{B}{R\sqrt{T}}$ and \textit{(iii)} with $\gamma_t = \frac{B}{R\sqrt{t}}$.
+\textbf{Convergence for strongly convex functions (1)}: Assume that $f$ is $\mu$-strongly convex, then subgradient descent with stepsize $\gamma_t = \frac{1}{\mu t}$ satisfies: $\min_{1\leq t \leq T}{f(\xx_t) - f^*} \leq \frac{B^2(\ln(T) + 1)}{2 \mu T}$ and $f(\hat{\xx_T}) - f^* \leq \frac{B^2(\ln(T)+1)}{2\mu T}$, where $\hat{\xx_T} = \frac{1}{T}\sum_{t=1}^T{\xx_t}$. \\
+\textbf{Convergence for strongly convex functions (2)}: Assume that $f$ is $\mu$-strongly convex, then subgradient descent with stepsize $\gamma_t = \frac{1}{\mu (t+1)}$ satisfies: $\min_{1\leq t \leq T}{f(\xx_t) - f^*} \leq \frac{2B^2}{\mu(T+1)}$ and $f(\hat{\xx_T}) - f^* \leq \frac{2B^2}{\mu(T+1)}$, where $\hat{\xx_T} = \frac{1}{T}\sum_{t=1}^T{\frac{2t}{T(T+1)}\xx_t}$. \\
+While the convergence rates achieved by subgradient descent seems much worse than those achieved by gradient descent for smooth problems, one cannot improve the $\BigO(1 / \sqrt{T})$ and $\BigO(1 / T)$ rates for the convex and strongly convex situations, respectively, when using block-box oriented methods that only have access to the subgradient of the objective function. \\

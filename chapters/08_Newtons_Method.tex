@@ -1,0 +1,24 @@
+\section{Newton’s Method}
+\Title{One dimensional case}
+The goal is to find the zero of a differentiable function $f : \R \rightarrow \R$, using an iterative method. Starting with some $x_0$ we compute: $x_{t+1} = x_t - \frac{f(x_t)}{f'(x_t)}$. Note that this is equivalent to solving the following linear equation: $f(x_t) + f'(x_t)(x - x_t) = 0$. \\
+The Newton step obviously fails if $f'(x_t) = 0$ and may get out of control if $\abs{f'(x_t)}$ is very small. \\
+\Title{Newton’s method for optimization}
+Suppose we want to find a global minimum $x^*$ of a differentiable convex function $f: \R \rightarrow \R$ (assuming that a global minimum exists). We can equivalently search for a zero of the derivative $f'$. If $f$ is twice differentiable the Newton Method yields: $x_{t+1} = x_t - \frac{f'(x_t)}{f''(x_t)}$. For $d \geq 1$ we get: 
+\begin{framed}
+    The \textbf{Newton step} for minimizing a twice differentiable convex function:
+    \begin{align*}
+        \xx_{t+1} = \xx_t - \nabla^2 f(\xx_t)^{-1} \nabla f(\xx_t)
+    \end{align*}
+\end{framed}
+Also notice that we can consider the newton method as a special case of $\xx_{t+1} = \xx_t - H(\xx_t) \nabla f(\xx_t)$, where $H(\xx_t) \in \R^{d \times d}$ is some matrix. Note that gradient descent is of this form with $H(\xx_t) = \gamma I$. \\
+\textbf{Minimization of Taylor}: Let $f$ be convex and twice differentiable at $\xx_t \in \dom(f)$ with $\nabla^2 f(\xx_t) \succ 0$ being invertible. Then the vector $\xx_{t+1}$ resulting from the Newton step satisfies: $\xx_{t+1} = \argmin_{\xx \in \R^d}{f(\xx_t) + \nabla f(\xx_t)^T(\xx - \xx_t) + \frac{1}{2}(\xx - \xx_t)^T \nabla^2 f(\xx_t) (\xx - \xx_t)}$. \\
+\Title{Convergence result}
+Let $f : \dom(f) \rightarrow \R$ be twice differentiable with a critical point $\xx^*$. Suppose that there is a ball $X \subset \dom(f)$ with center $\xx^*$ such that the following holds:
+\begin{enumerate}[label=(\roman*), topsep=0pt,itemsep=0ex,partopsep=0ex,parsep=0ex]  
+    \itemsep0em
+    \item Bounded inverse Hessian: Thre exist a real number $\mu > 0$ such that $\norm{\nabla^2 f(\xx)^{-1}} \leq \frac{1}{\mu}$, $\forall \xx \in X$
+    \item Lipschitz continuous Hessians: There exists a real number $B \geq 0$ such that: $\norm{\nabla^2 f(\xx) - \nabla^2 f(\yy)} \leq B \norm{\xx - \yy}$ $\forall x \in X$.
+\end{enumerate}
+Notice that \textit{(i)} implies that the Hessian is always invertible in $X$, then for $\xx_t \in X$ and $\xx_{t+1}$ the resulting Newton step we get $\norm{\xx_{t+1} - \xx^*} \leq \frac{B}{2\mu}\norm{\xx_t - \xx^*}^2$. \\
+This yields that in this case if $\xx_0 \in X$ satisfies $\norm{\xx_0 - \xx^*} \leq \frac{\mu}{B}$ we get: $\norm{\xx_T - \xx^*} \leq \frac{\mu}{B} \left(\frac{1}{2} \right)^{2^T -1}$. \\
+\textbf{Theorem (Hessian inverses of strongly convex functions are bounded)} Let $f : \dom(f) \rightarrow \R$ be twice differentiable and strongly convex with parameter $\mu$ over an open convex subset $X \subset \dom(f)$, then $\nabla^2 f(\xx)$ is invertable and $\norm{\nabla^2 f(\xx)^{-1}} \leq \frac{1}{\mu}$ for all $\xx \in X$. 

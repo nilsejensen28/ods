@@ -1,0 +1,41 @@
+\section{Coordinate Descent}
+In large-scale learning, an issue with the gradient descent algorithms is that in every iteration, we need to compute the full gradient $\nabla f(\xx_t)$ in order to obtain the next iterate $\xx_{t+1}$. If the number of variables $d$ is large, this can be very costly. The idea of coordinate descent is to update only one coordinate of $\xx_t$ at a time, and to do this, we only need to compute one coordinate of $\nabla f(\xx_t)$ (one partial derivative). We expect this to be by a factor of $d$ faster than computation of the full gradient and update of the full iterate.
+
+\Title{Polyak-Łojasiewicz inequality (PL-Inequality)}
+\begin{framed}
+    Let $f : \R^d \rightarrow \R$ be a differentiable function with global minimum $\xx^*$. We say that $f$ satisfies the \textbf{Polyak-Łojasiewicz inequality} if the following holds for some $\mu > 0$: $\frac{1}{2}\norm{\nabla f(\xx)}^2 \geq \mu (f(\xx) - f(\xx^*))$ for all $\xx \in \R^d$.
+\end{framed}
+\textbf{Strong Convexity $\implies$ PL inequality}: Let $f : \R^d \rightarrow \R$ be a differentiable and strongly convex with parameter $\mu > 0$, then $f$ satisfies the PL-Inequality for the same $\mu$. The opposite is \textit{not} true. \\
+We can use the PL-Inequality to repeat the analysis of gradient descent. We get: \\
+\textbf{Theorem}: Let $f : \R^d \rightarrow \R$ be differentiable with a global minimum $\xx^*$. Suppose that $f$ is smooth with parameter $L$ and satisfies the PL-Inequality with parameter $\mu > 0$, then choosing stepsize $\gamma = \frac{1}{L}$, gradient descent satisfies: $f(\xx_T) - f(\xx^*) \leq \left(1 - \frac{\mu}{L}\right)^T(f(\xx_0)- f(\xx^*))$. Trick: Start with sufficient decrease.  \\
+\Title{Coordinate descent algorithms}
+Let $f : \R^d \rightarrow \R$ be differentiable and $\mathcal{L} = (L_1, \dots, L_d) \in \R^d_{+}$. $f$ is called \textbf{coordinate-wise smooth} (with parameter $\mathcal{L}$) if for every coordinate $i=1, \dots, d$: $f(\xx + \lambda \ee_i) \leq f(\xx) + \lambda \nabla_i f(\xx) + \frac{L_i}{2}\lambda^2$, $\forall \xx \in \R^d, \lambda \in \R_{+}$. \\
+\begin{framed}
+    \textbf{Coordinate descent algorithms} first choose an active coordinate $i \in [d]$, and then do the following: $\xx_{t+1} = \xx_t - \lambda_i \ee_i$. We often use a gradient based stepsize: $\xx_{t+1} = \xx_t - \gamma_i \nabla_i f(\xx_t) \ee_i$.
+\end{framed}
+\textbf{Lemma}: Let $f:\R^d \rightarrow \R$ be differentiable and coordinate-wise smooth with parameter $\mathcal{L}$. With active coordinate $i$ in iteration $t$ and stepsize $\gamma_i = \frac{1}{L_i}$ coordinate descent satisfies: $f(\xx_{t+1}) \leq f(\xx_t) - \frac{1}{2L_i} \abs{\nabla_i f(\xx_t)}^2$.
+\textbf{Randomized coordinate descent}: The active coordinate is choosen uniformely at random from the set $[d]$. It is at least as fast as gradient descent on smooth functions, and if we assume the PL-inequality we get: \\
+\textbf{Theorem}: Let $f: \R^d \rightarrow \R$ be differentiable with a global minimum $\xx^*$. Suppose that $f$ is coordinate-wise smooth with parameter $L$ and satisfies the PL-Inequality with parameter $\mu > 0$. Choosing stepsize $\gamma_i = \frac{1}{L}$ randomized coordinate descent satisfies: $\E[f(\xx_T) - f(\xx^*)] \leq \left(1 - \frac{\mu}{dL} \right)^T(f(\xx_0) - f(\xx^*))$. \\
+\textbf{Importance Sampling} We choose the active coordinate as follows: sample $i \in [d]$ with probability $\frac{L_i}{\sum_{j=1}^d{L_j}}$. \\
+\textbf{Theorem}: Let $f: \R^d \rightarrow \R$ be differentiable with a global minimum $\xx^*$. Suppose that $f$ is coordinate-wise smooth with parameter $\mathcal{L}$ and satisfies the PL-Inequality with parameter $\mu > 0$. Let $\Bar{L} = \frac{1}{d}\sum_{i=1}^d{L_i}$, be the average of the smoothness constants. Then importance sampling coordinate descent with $\gamma_i = \frac{1}{L_i}$ satisfies: $\E[f(\xx_T) - f(\xx^*)] \leq \left(1 - \frac{\mu}{d\Bar{L}}\right)^T(f(\xx_0) - f(\xx^*))$. \\
+\textbf{Steepest coordinate descent}: We choose the active coordinate: $i= \argmax_{i\in [d]}{\abs{\nabla_i f(\xx_t)}}$. \\
+\textbf{Theorem}: Let $f: \R^d \rightarrow \R$ be differentiable with a global minimum $\xx^*$. Suppose that $f$ is coordinate-wise smooth with parameter $L$ and satisfies the PL-Inequality with parameter $\mu > 0$. Choosing stepsize $\gamma_i = \frac{1}{L}$ steepest coordinate descent satisfies: $f(\xx_T) - f(\xx^*) \leq \left(1 - \frac{\mu}{dL} \right)^T(f(\xx_0) - f(\xx^*))$. \\
+\textbf{Strong convexity with respect to $l_1$-norm} A function is strongly convex with respect to the $l_1$-norm if: $f(\yy) \geq f(\xx) + \nabla f(\xx)^T (\yy - \xx) + \frac{\mu_1}{2}\norm{\yy - \xx}_1^2$. Note that: $\sqrt{d} \cdot \norm{\yy - \xx}_2  \geq \norm{\yy - \xx}_1 \geq \norm{\yy - \xx}_2$. Hence the function is also strongly convex in the classical sense.\\
+\textbf{Lemma}: Let $f: \R^d \rightarrow \R$ be differentiable and strongly convex with parameter $\mu_1$ w.r.t. $l_1$-norm. Then $f$ satisfies the PL-Inequality w.r.t. $l_{\infty}$-norm with the same $\mu_1$: $\frac{1}{2}\norm{\nabla f(\xx)}_{\infty}^2 \geq \mu_1(f(\xx) - f(\xx^*))$. \\
+\textbf{Theorem}: Let $f: \R^d \rightarrow \R$ be differentiable with a global minimum $\xx^*$. Suppose that $f$ is coordinate-wise smooth with parameter $L$ and satisfies the $l_1$ PL-Inequality with parameter $\mu_1 > 0$. Choosing stepsize $\gamma_i = \frac{1}{L}$ steepest coordinate descent satisfies: $f(\xx_T) - f(\xx^*) \leq \left(1 - \frac{\mu_1}{L} \right)^T(f(\xx_0) - f(\xx^*))$. \\
+\textbf{Greedy coordinate descent}: We do not require $f$ to be differentiable. In each iteration, we make the step that maximizes the progress in the chosen coordinate. This requires to perform a line search by solving a 1-dimensional optimization problem: choose $i \in [d]$ and set $\xx_{t+1} = \argmin_{\lambda \in \R}{f(\xx_t + \lambda \ee_i)}$. There are cases where the line search can exactly be done analytically, or approximately by some other means. In the differentiable case, we can take any of the previously studied coordinate descent variants and replace some of its steps by greedy steps if it turns out that we can perform line search along the selected coordinate. \\
+Let $f: \R^d \rightarrow \R$ be of the form $f(\xx) := g(\xx) + h(\xx)$, with $h(\xx) ) \sum_{i}{h_i(\xx)}$, $g$ convex and differentiable and all $h_i$ convex. We call such a function \textbf{separable}. Greedy coordinate descent will always make progress for such a function. This is relevant for the LASSO Regression. \\
+\Title{Summary} \\
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+\begin{center}
+    \begin{tabular}{ |P{12em}|P{3em}|P{7em}|P{3em}| } 
+        \hline
+        Algorithm & PL norm & Smoothness & Bound \\
+        \hline
+        Randomized & $l_2$ & $L$ & $1 - \frac{\mu}{dL}$ \\
+        Importance sampling & $l_2$ & $(L_1, \dots, L_d)$ & $1 - \frac{\mu}{dL}$ \\
+        Steepest & $l_2$ & $L$ & $1 - \frac{\mu}{dL}$ \\
+        Steeper (than Steepest) & $l_1$ & $L$ & $1 - \frac{\mu_1}{L}$ \\
+        \hline
+    \end{tabular}
+\end{center}

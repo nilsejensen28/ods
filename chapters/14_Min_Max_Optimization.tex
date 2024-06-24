@@ -1,0 +1,58 @@
+\section{Min-Max Optimization}
+We consider the \textbf{min-max problem} of the form $\min_{\xx \in \X} \max{\yy \in \Y} \phi(\xx, \yy)$.
+\begin{framed}
+    We say that $(\xx^*, \yy^*)$ is a \textbf{saddle point} if $\phi(\xx^*, \yy) \leq \phi(\xx^*, \yy^*) \leq \phi(\xx, \yy^*)$, for any $\xx \in \X$ and $\yy \in \Y$. This can be seen as a \textbf{Nash equilibrium} in a similtaneous game, where no player has an incentive to make unilateral change at the NE.
+\end{framed}
+\begin{framed}
+    We say that $(\xx^*, \yy^*)$ is a \textbf{global minimax point} if $\phi(\xx^*, \yy) \leq \phi(\xx^*, \yy^*) \leq \max_{\yy' \in \Y} \phi(\xx, \yy')$ for any $\xx \in \X, \yy \in \Y$. This can be seen as a \textbf{Stackelberg equilibrium} in a sequential game (best reponse to best reponse).
+\end{framed}
+Next we define the \textbf{primal} and \textbf{dual} problems induced by the minimax optimization problem:
+$\mathrm{Opt}(P) = \min_{\xx \in \X}{\Bar{\phi}(\xx)}$, with $\Bar{\phi}(\xx) = \max_{\yy \in \Y}{\phi(\xx, \yy)}$ and $\mathrm{Opt}(D) = \min_{\xx \in \X}{\ubar{\phi}(\xx)}$, with $\ubar{\phi}(\xx) = \max_{\yy \in \Y}{\phi(\xx, \yy)}$ \\
+Notice that weak duality holds ($\mathrm{Opt}(D) \leq \mathrm{Opt}(P)$) and hence: $\max_{\yy \in \Y}\min_{\xx \in X}{\phi(\xx, \yy)} \leq \min_{\xx \in X}\max_{\yy \in \Y}{\phi(\xx, \yy)}$. \\
+\textbf{Existence of saddle point}: The point $(\xx^*, \yy^*)$ is a saddle point of $\phi(\xx, \yy)$ if and only if $\max_{\yy \in \Y}\min_{\xx \in X}{\phi(\xx, \yy)} = \min_{\xx \in X}\max_{\yy \in \Y}{\phi(\xx, \yy)}$ and $\xx^* \in \argmin_{\xx \in \X}{\Bar{\phi}(\xx)}$ and $\yy^* \in \argmax_{\yy \in \Y}{\ubar{\phi}(\yy)}$. In other words, $(\xx^*, \yy^*)$ is a saddle point if and only if strong duality holds and $\xx^*$ , $\yy^*$ are respectively the optimal solutions to the induced primal problem (P ) and the dual problem (D). \\
+\textbf{Remark}: A saddle point, if it exists, is also a global minimax point.And there is no advantage to the players of knowing the opponent’s choice or to play second. The minimax, maximin, and the equilibrium all give the same payoff. \\
+\Title{Minimax Theorem}
+\begin{framed}
+    \textbf{von Neumann’s Minimax theorem}: For any payoff matrix $A \in \R^{m \times n}$: $\min_{\xx \in \Delta_m} \max_{\yy \in \Delta_n} \xx^T A \yy = \max_{\yy \in \Delta_n} \min_{\xx \in \Delta_m} \xx^T A \yy$, where $\Delta_m = \{ \xx \in \R_{+}^m : \sum_{i=1}^m{x_i} = 1\}, \Delta_n = \{ \yy \in \R_{+}^n : \sum_{i=1}^m{y_i} = 1\}$.
+\end{framed}
+\begin{framed}
+    \textbf{Sion-Kakutani Minimax theorem}: Let sets $\X \subseteq \R^m$ and $\Y \subseteq \R^n$ be two convex compact sets. Let $\phi(\xx, \yy) : \mathcal{X} \cross \mathcal{Y} \rightarrow \R$ be a continuous function such that for any fixed $\yy  \in \Y$ it is convex in $\xx$ and for any fixed $\xx \in \X$ it is convex in $\yy$, we call such a function \textbf{convex-concave}. Then $\phi(\xx, \yy)$ has a saddle point on $\X \times \Y$ and $\max_{\yy \in \Y}\min_{\xx \in X}{\phi(\xx, \yy)} = \min_{\xx \in X}\max_{\yy \in \Y}{\phi(\xx, \yy)}$.
+\end{framed}
+A function $\phi : \X \times \Y \rightarrow \R$ is \textbf{strongly-convex-strongly-concave} if there exist constants $\mu_1, \mu_2 > 0$ such that: $\phi(\xx, \yy)$ is $\mu_1$-strongly convex in $\xx \in \X$ for every fixed $\yy \in \Y$;  $\phi(\xx, \yy)$ is $\mu_2$-strongly concave in $\yy \in \Y$ for every fixed $\xx \in \X$, namely for any $\xx, \xx_1, \xx_2 \in \X$ and $\yy, \yy_1, \yy_2 \in \Y$:
+\begin{enumerate}[label=(\roman*), topsep=0pt,itemsep=0ex,partopsep=0ex,parsep=0ex] 
+    \itemsep0em
+    \item $\phi(\xx_1, \yy) \geq \phi(\xx_2, \yy) + \nabla_{\xx} \phi(\xx_2, \yy)^T(\xx_1 - \xx_2) + \frac{\mu_1}{2}\norm{\xx_1 - \xx_2}^2$
+    \item $- \phi(\xx, \yy_1) \geq - \phi(\xx, \yy_2) - \nabla_{\yy} \phi(\xx, \yy_2)^T(\yy_1 - \yy_2) + \frac{\mu_2}{2}\norm{\yy_1 - \yy_2}^2$
+\end{enumerate}
+A function $\phi : \X \times \Y \rightarrow \R$ is \textbf{$L$-Lipschitz smooth jointly in $\xx$ and $\yy$} if for any $\xx_1, \xx_2 \in \X$ and $\yy_1, \yy_2 \in \Y$:
+\begin{enumerate}[label=(\roman*), topsep=0pt,itemsep=0ex,partopsep=0ex,parsep=0ex] 
+    \itemsep0em
+    \item $\norm{\nabla_{\xx} \phi(\xx_1, \yy_1) - \nabla_{\xx} \phi(\xx_2, \yy_2)} \leq L (\norm{\xx_1 - \xx_2} + \norm{\yy_1 - \yy_2} )$
+    \item $\norm{\nabla_{\yy} \phi(\xx_1, \yy_1) - \nabla_{\yy} \phi(\xx_2, \yy_2)} \leq L (\norm{\xx_1 - \xx_2} + \norm{\yy_1 - \yy_2} )$
+\end{enumerate}
+We measure the optimality via the \textbf{duality gap}: $\text{duality gap} = \max_{\yy \in \Y} \phi(\widehat{\xx}, \yy) - \min_{\xx \in \X} \phi(\xx, \widehat{\yy}) \geq 0$. When duality gap $=0$ we have a saddle-point. If duality gap $\leq \epsilon$ we have an $\epsilon$-saddle point. \\
+\Title{Algorithms}
+\begin{framed}
+    \textbf{Gradient Descent Ascent}: The algorithm updates x and y simultaneuous at each iteration using
+only the gradient information: $\xx_{t+1} = \Pi_{\X}(\xx_t - \eta \nabla_{\xx} \phi(\xx_t, \yy_t))$ and $\yy_{t+1} = \Pi_{\Y}(\yy_t - \eta \nabla_{\yy} \phi(\xx_t, \yy_t))$.
+\end{framed}
+\textbf{Convergence of GDA}: Assume that $\phi$ is $\mu$-strongly-convex-strongly-concave and jointly smooth with parameter $L$, then GDA with stepsize $\eta < \frac{\mu}{2L^2}$ converges linearly: $ \norm{\xx_{t+1} - \xx^*}^2 + \norm{\yy_{t+1} - \yy^*} \leq (1 + 4\eta^2 L^2 - 2\eta \mu)(\norm{\xx_t - \xx^*}^2 + \norm{\yy_t - \yy^*}^2)$. With stepsize $\eta = \frac{\mu}{4L^2}$ this yields: $\norm{\xx_T - \xx^*}^2 + \norm{\yy_T - \yy^*}^2 \leq (1 - \frac{\mu^2}{4L^2})^T (\norm{\xx_0 - \xx^*}^2 + \norm{\yy_0 - \yy^*}^2)$. \\
+\textbf{Careful}: GDA with constant stepsize may not converge for general convex-concave function. Consider the function $\phi(x, y) = xy$. \\
+\begin{framed}
+    \textbf{Extragradient Method (EG)}: The main idea of EG is to use the gradient at the current point to find a mid-point, and then use the gradient at that mid-point to find the next iterate:
+    \begin{enumerate}[label=, topsep=0pt,itemsep=0ex,partopsep=0ex,parsep=0ex, leftmargin=0cm] 
+        \itemsep0em
+        \item $\xx_{t+\frac{1}{2}} = \Pi_{\X}(\xx_t - \eta \nabla_{\xx} \phi(\xx_t, \yy_t)), \yy_{t+1} = \Pi_{\Y}(\yy_t + \eta \nabla_{\yy} \phi(\xx_t, \yy_t))$,
+        \item $\xx_{t+1} = \Pi_{\X}\left(\xx_t - \eta \nabla_{\xx} \phi(\xx_{t+\frac{1}{2}}, \yy_{t + \frac{1}{2}})\right)$, $\yy_{t+1} = \Pi_{\Y}\left(\yy_t - \eta \nabla_{\yy} \phi(\xx_{t+\frac{1}{2}}, \yy_{t + \frac{1}{2}})\right)$.
+    \end{enumerate}
+\end{framed}
+\textbf{Convergence of EG}: Assume that $\D_{\X} := \max_{\xx, \xx'}{\norm{\xx - \xx'}} < \infty$ and $\D_{\Y} := \max_{\yy, \yy'}{\norm{\yy - \yy'}} < \infty$. Assume that $\phi$ is convex-concave and jointly $L$-smooth then EG with stepsize $\eta \leq \frac{1}{2L}$ satisfies by denoting $\widehat{\xx}_T = \frac{1}{T}\sum_{t=1}^T{\xx_{t+\frac{1}{2}}}$ and $\widehat{\yy}_T = \frac{1}{T}\sum_{t=1}^T{\yy_{t+\frac{1}{2}}}$, setting $\eta = \frac{1}{2L}$, this implies that the duality gap: $\epsilon_{\text{sad}}(\widehat{\xx}_T, \widehat{\yy}_T) \leq \frac{D_{\X}^2 + D_{\Y}^2)}{2 \eta T} = \frac{L ( D_{\X}^2 + D_{\Y}^2)}{T}$. \\
+\textbf{Connections to Proximal Point Algorithm (PPA)}: At each iteration, PPA performs the update: $(\xx_{t+1}, \yy_{t+1}) = \argmin_{\xx \in \mathcal{X}} \argmax_{\yy \in \mathcal{Y}} \{ \phi(\xx, \yy) + \frac{1}{2\eta}\norm{\xx - \xx_t}^2 - \frac{1}{2\eta}\norm{\yy - \yy_t}^2 \}$. \\
+\Title{Variational Inequalities}
+\begin{framed}
+    \textbf{Variational Inequality (VI) Problem}: Let $\mathcal{Z} \subset \R^d$ be a nonempty subset and consider mapping $F : \mathcal{Z} \rightarrow \R^d$. The goal of a $VI$ is to find a (strong) solution $\zz^* \in \mathcal{Z}$ such that $\langle F(\zz^*), \zz - \zz^* \rangle \geq 0$ for all $\zz \in \mathcal{Z}$. This is known as the \textbf{Stampacchia Variational Inequality (SVI)}. A closely relevant problem is the \textbf{Minty Variational Inequality (MVI)}, which aims to find a (weak) solution $\zz^*$ such that $\langle F(\zz), \zz - \zz^* \rangle \geq 0$ for all $\zz \in \mathcal{Z}$.
+\end{framed}
+An operator $F : \mathcal{Z} \rightarrow \R^d$ is said to be \textbf{monotone} if $\langle F(\uu) - f(\vv), \uu - \vv \rangle \geq 0$, $\forall \uu, \vv \in \mathcal{Z}$, it is said to be \textbf{$\mu$-strongly monotone} with modulus $\mu > 0$ if $\langle F(\uu) - f(\vv), \uu - \vv \rangle \geq \mu \norm{\uu - \vv}^2$, $\forall \uu, \vv \in \mathcal{Z}$.
+\textbf{Equivalence of SVI and MVI} \textit{(i)} If $F$ is monotone, then a solution to SVI is also a solution to MVI. \textit{(ii)} If $F$ is continuous and $\mathcal{Z}$ is convex, then a solution to MVI is also a solution to SVI. \\
+\textbf{Accuracy Measure}: A natural inaccuracy measure if a candidate solution $\widehat{\zz}$ to MVI is the dual gap function: $\epsilon_{\text{VI}}(\widehat{\zz}) := \max_{\zz \in \mathcal{Z}} \langle F(\zz), \widehat{\zz} - \zz \rangle$. \\
+Extragradient Method (EG) and Optimistic Gradient Descent Ascent (OGDA) can be directly extended to solving VIs. 

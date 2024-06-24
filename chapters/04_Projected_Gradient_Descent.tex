@@ -1,0 +1,16 @@
+\section{Projected Gradient Descent}
+\Title{Algorithm}
+\textbf{Goal}: Minimize a function $f$ over a \textit{closed convex} subset $X \subset \R^d$.
+\begin{framed}
+    \textbf{Projected gradient descent}: Choose $\xx_0 \in X$ arbitrary and define: $\yy_{t+1}= \xx_t - \gamma \nabla f(\xx_t)$ and $\xx_{t+1} := \Pi_X(\yy_{t+1}) := \argmin_{\xx \in X}{\norm{\xx - \yy_{t+1}}^2}$.
+\end{framed}
+Projected gradient descent requires the same number of steps as gradient descent but projected gradient descent requires a nontrivial primitive to be solved in each step (projection onto the feasible region) \\
+\textbf{Useful fact}: Let $X \subset \R^d$ be closed and convex and $\xx \in X$, $\yy \in \R^d$, then:
+\begin{enumerate}[label=(\roman*), topsep=0pt,itemsep=0ex,partopsep=0ex,parsep=0ex]  
+    \itemsep0em
+    \item $(\xx - \Pi_X(\yy))^T(\yy - \Pi_X(\yy))\leq 0$
+    \item $\norm{\xx - \Pi_X(y)}^2 + \norm{\yy - \Pi_X(\yy)}^2 \leq \norm{\xx - \yy}^2$
+\end{enumerate}
+All the results from which we proved in the previous chapter still hold as long as the function is smooth/strongly convex over $X$. \\
+\Title{Projecting onto $l_1$-balls}
+\textbf{Theorem}: Let $\vv \in \R^d$ and $R \in \R_{+}$, $X = B_1(R)$ the $l_1$-ball around 0 of radius $R$. The projection $\Pi_X(\vv) = \argmin_{\xx \in X}{\norm{\xx - \vv}^2}$ of $\vv$ onto $B_1(R)$ can be computed in time $\BigO(d \log d)$.

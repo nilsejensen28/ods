@@ -1,0 +1,201 @@
+\documentclass[8pt,landscape, a4paper]{extarticle}
+\usepackage{multicol}
+\usepackage{calc}
+\usepackage{xspace}
+\usepackage{ifthen}
+\usepackage[landscape]{geometry}
+\usepackage[dvipsnames]{xcolor}
+\usepackage{hyperref}
+\usepackage{tikz}
+\usepackage{polynom}
+\usepackage{pifont}
+\usepackage{amssymb}
+\usepackage{setspace}
+\usepackage{dsfont}
+
+% my packages:
+\usepackage{amsmath, amssymb, amsfonts, amsthm, mathtools}
+\usepackage{tcolorbox}
+\usepackage[utf8]{inputenc}
+\usepackage{enumitem}
+\usepackage{physics}
+\usepackage{wrapfig}
+%framed boxes
+\usepackage{mdframed}
+\usepackage{array}
+\usepackage{tcolorbox}
+\usepackage{accents}
+
+%for images
+\usepackage{graphicx}
+
+% This sets page margins to .6cm
+\geometry{top=-0.1cm,left=0.cm,right=0.cm,bottom=0.1cm}
+
+% Turn off header and footer
+\pagestyle{plain}
+% Turn off page numbering
+\pagenumbering{gobble}
+
+% Redefine section commands to use less space
+\makeatletter
+\renewcommand{\section}{\@startsection{section}{1}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {0.5ex plus .2ex}%x
+                                {\normalfont\large\bfseries}}
+\renewcommand{\subsection}{\@startsection{subsection}{2}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
+                                {\normalfont\small\bfseries}}
+\renewcommand{\subsubsection}{\@startsection{subsubsection}{3}{0mm}%
+                                {-1ex plus -.5ex minus -.2ex}%
+                                {1ex plus .2ex}%
+                                {\normalfont\small\bfseries}}
+\makeatother
+
+% Don't print section numbers
+\setcounter{secnumdepth}{1}
+
+\setlength{\parindent}{0pt}
+\setlength{\parskip}{0pt plus 0.5ex}
+% define box
+\tikzstyle{fancytitle} =[fill=black, text=white, font=\footnotesize\bfseries]
+
+\usepackage{color}
+\definecolor{light}{rgb}{0.5, 0.5, 0.5}
+\def\light#1{{\color{light}#1}}
+
+% -----------------------------------------------------------------------
+
+\begin{document}
+\raggedright
+\footnotesize
+\begin{multicols*}{3}
+
+% multicol parameters
+% These lengths are set only within the two main columns
+\setlength{\columnseprule}{0.25pt}
+\setlength{\premulticols}{1pt}
+\setlength{\postmulticols}{1pt}
+\setlength{\multicolsep}{1pt}
+\setlength{\columnsep}{2pt}
+
+
+% main heading
+\begin{center}
+	\Large{\textbf{Optimization for Data Science}} \\
+    \small{by Nils Jensen in FS23 - No guarantee of completeness}
+\end{center}
+
+
+\newcommand\R{\mathbb{R}}
+\newcommand\E{\mathbb{E}}
+\newcommand\Q{\mathbb{Q}}
+\newcommand\N{\mathbb{N}}
+\newcommand\C{\mathbb{C}}
+\newcommand\X{\mathcal{X}}
+\newcommand\Y{\mathcal{Y}}
+\newcommand\D{\mathcal{D}}
+\newcommand{\veca}{\mathbf{a}}
+\newcommand{\bb}{\mathbf{b}}
+\newcommand{\vecd}{\mathbf{d}}
+\newcommand{\ee}{\mathbf{e}}
+\newcommand{\vecg}{\mathbf{g}}
+\newcommand{\mm}{\mathbf{m}}
+\newcommand{\vecs}{\mathbf{s}}
+\newcommand{\uu}{\mathbf{u}}
+\newcommand{\vv}{\mathbf{v}}
+\newcommand{\ww}{\mathbf{w}}
+\newcommand{\xx}{\mathbf{x}}
+\newcommand{\yy}{\mathbf{y}}
+\newcommand{\zz}{\mathbf{z}}
+\newcommand{\rr}{\mathbf{r}}
+\newcommand{\ssigma}{\boldsymbol{\sigma}}
+\newcommand{\xxi}{\boldsymbol{\xi}}
+\newcommand{\eeta}{\boldsymbol{\eta}}
+\newcommand\Max{\mathrm{Max}}
+\newcommand\argmin{\mathrm{argmin}}
+\newcommand\relint{\mathrm{relint}}
+\newcommand\argmax{\mathrm{argmax}}
+\newcommand\prox{\mathrm{prox}}
+\newcommand\Var{\mathrm{Var}}
+\newcommand\Cov{\mathrm{Cov}}
+\newcommand\conv{\mathrm{conv}}
+\newcommand\diam{\mathrm{diam}}
+\newcommand\sgn{\mathrm{sgn}}
+\newcommand{\dom}{\textbf{dom}}
+\newcommand\Min{\mathrm{Min}}
+\newcommand\Limit{\lim_{n \rightarrow \infty}}
+\newcommand\Sup{\mathrm{Sup}}
+\newcommand\lmo{\mathrm{LMO}}
+\newcommand\Inf{\mathrm{Inf}}
+\newcommand\Def{\textbf{Def.}\hspace{3mm}}
+\newcommand\Bsp{\textit{Bsp.}\hspace{2mm}}
+\newcommand\Satz{\textbf{{Satz.}}\hspace{3mm}}
+\newcommand\Kor{\textbf{Kor.}\hspace{3mm}}
+\newcommand\Bem{\textbf{Bem.}\hspace{3mm}}
+\newcommand\converges[2]{\underset{#1\rightarrow #2}{\longrightarrow}}
+\newcommand{\BigO}{\mathcal{O}}
+
+\newcommand\Sum{\sum\limits}
+\newcommand\Lim{\lim\limits}
+\newcommand\Int{\int\limits}
+
+\newcommand\Reihe{\sum_{k = 1}^{\infty}}
+
+\newcommand\Ib{\overline{I}}
+
+\newcommand*\diff{\mathop{}\!\mathrm{d}}
+
+\newcommand\Title[1]{\vspace{.1mm}\begin{tikzpicture} \node[fancytitle, right=10pt, fill=gray] {#1}; \end{tikzpicture}}
+
+\everymath{\color{PineGreen}}
+
+\newcommand{\ubar}[1]{\underaccent{\bar}{#1}}
+
+%\renewcommand{\(}{\relax\ifmmode\@badmath\else\color{blue}$\fi}
+%\renewcommand{\)}{\relax\ifmmode\ifinner$\color{black}\else\@badmath\fi\else \@badmath\fi }
+%\catcode`\$=13
+%\def${\ifmmode)\xspace\else(\fi} 
+%\makeatother
+
+\scriptsize
+
+\newenvironment{framed}
+{\begin{tcolorbox}[colback=orange!10!white,
+                   colframe=black, 
+                   boxrule=0.5pt,
+                   enlarge top by=0cm, 
+                   enlarge bottom by=0cm, 
+                   boxsep=-2mm]}
+		{\end{tcolorbox}}
+
+% _____ BEGINNING OF DOCUMENT __________________________________________________
+
+\input{ODS/chapters/01_Introduction}
+\input{ODS/chapters/02_Theory_of_Convex_Functions}
+\input{ODS/chapters/03_Gradient_Descent}
+\input{ODS/chapters/04_Projected_Gradient_Descent}
+\input{ODS/chapters/05_Coordinate_Descent}
+\input{ODS/chapters/06_Nonconvex_Functions}
+\input{ODS/chapters/07_Frank_Wolfe_Algorithm}
+\input{ODS/chapters/08_Newtons_Method}
+\input{ODS/chapters/09_Quasi_Newton_Methods}
+\input{ODS/chapters/10_Subgradient_Method} 
+\input{ODS/chapters/11_Mirror_Descent_Smoothing_Proximal_Algorithms}
+\input{ODS/chapters/12_Stochastic_Optimization}
+\input{ODS/chapters/13_Finite_Sum_Optimization}
+\input{ODS/chapters/14_Min_Max_Optimization}
+
+%TO-DO: formel für normalverteilung, map estimet, 
+
+
+% ____ FOOTER __________________________________________________________________
+% Template:
+%Julia Bogdan (jbogdan@student.ethz.ch), 2022
+%
+% Content: 
+% based on Lecture Introduction to Machine Learning in FS22 @ETH Zürich 
+
+\end{multicols*}
+\end{document}

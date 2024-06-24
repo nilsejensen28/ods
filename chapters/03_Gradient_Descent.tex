@@ -1,0 +1,75 @@
+\section{Gradient Descent}
+\Title{Overview}
+Number of steps is given which the respective variant needs on the respective function class to achieve additive approximation error at most $\epsilon$.
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+\begin{center}
+    \begin{tabular}{ |P{10em}|P{5em}|P{5em}|P{5em}|P{5em}| } 
+     \hline
+        & Lipschitz convex functions & smooth convex functions & strongly convex functions & smooth and strongly convex functions \\ 
+        \hline
+        gradient descent & $\BigO(1/\epsilon^2)$ & $\BigO(1/\epsilon)$ & & $\BigO(\log \left(1/\epsilon\right))$ \\
+        \hline
+        accelerated gradient descent & & $\BigO(1 / \sqrt{\epsilon})$ & & \\
+        \hline
+        projected gradient descent & $\BigO(1 / \epsilon^2)$ & $\BigO(1 / \epsilon)$ & & $\BigO(\log(1 / \epsilon)$ \\
+        \hline
+        subgradient descent & $\BigO(1 / \epsilon^2)$ & & $\BigO(1 / \epsilon)$ & \\
+        \hline
+        stochastic gradient descent & $\BigO(1 / \epsilon^2)$ & & $\BigO(1 / \epsilon)$ & \\
+        \hline
+    \end{tabular}
+\end{center}
+\Title{Vanilla Gradient Descent}
+\begin{framed}
+    Each step of \textbf{gradient descent} is defined as: $\xx_{t+1} = \xx_t - \gamma \nabla f(\xx_t)$. Where $\gamma$ is a fixed \textbf{stepsize}.
+\end{framed}
+The \textbf{vanilla analysis} of gradient descent yields with $\vecg_t = \nabla f(\xx_t)$: $\sum_{t=0}^{T-1}{(f(\xx_t) - f(\xx^*))} \leq \frac{\gamma}{2}\sum_{t=0}^{T-1}{\norm{\vecg_t}^2} + \frac{1}{2 \gamma}\norm{\xx_0 - \xx^*}^2$. Trick: use cosine theorem and first order characterisation of convexity. \\
+\Title{Lipschitz convex functions}
+\textbf{Theorem}: Let $f : \R^d \rightarrow \R$ be convex and differentiable with a global minimum $\xx^*$. Suppose that $\norm{\xx_0 - \xx^*} \leq R$ and $\norm{\nabla f(\xx)} \leq B$ for all $\xx$. With stepsize $\gamma = \frac{R}{B\sqrt{T}}$ we get: $\frac{1}{T}\sum_{t=0}^{T-1}{(f(\xx_t) - f(\xx^*))} \leq \frac{RB}{\sqrt{T}}$. \\
+\Title{Smooth convex functions}
+\begin{framed}
+    Let $f : \dom(f) \rightarrow \R$ be a differentiable function and $X \subset \dom(f)$ be convex and $L \in \R_{+}$. $f$ is called \textbf{smooth} over $X$ if: 
+    \begin{align*}
+         f(\yy) \leq f(\xx) + \nabla f(\xx)^T (\yy - \xx) + \frac{L}{2}\norm{\xx - \yy}^2 && \forall \xx, \yy \in X
+    \end{align*}
+\end{framed}
+\textbf{Alternative characterisation of smoothness}: Suppose that $\dom(f)$ is open and convex and that $f$ is differentiable then the following are equivalent:
+\begin{enumerate}[label=(\roman*), topsep=0pt,itemsep=0ex,partopsep=0ex,parsep=0ex]
+    \itemsep0em
+    \item $f$ is smooth with parameter $L$.
+    \item $g(\xx) = \frac{L}{2} \xx^T \xx - f(\xx)$ is convex over $\dom(g) = \dom(f)$.
+\end{enumerate}
+Suppose that $f : \R^d \rightarrow \R$ is convex and differentiable, then the following two statements are equivalent:
+\begin{enumerate}[label=(\roman*), topsep=0pt,itemsep=0ex,partopsep=0ex,parsep=0ex]    
+    \itemsep0em
+    \item $f$ is smooth with parameter $L$.
+    \item $\norm{\nabla f(\xx) - \nabla f(\yy)} \leq L \norm{\xx -\yy}$ for all $\xx, \yy \in \R^d$.
+\end{enumerate}
+\textbf{Operations that preserve convexity} Let $f_1, \dots, f_n$ be smooth with parameters $L_1, \dots, L_n$ and let $\lambda_1, \dots, \lambda_n \in \R_{+}$. Then $f := \sum_{i=1}^n{\lambda_i f_i}$ is smooth with parameter $\sum_{i=1}^n{\lambda_i L_i}$. Furthermore if $f : \dom(f) \rightarrow \R$ is smooth with parameter $L$ and $g : \R^m \rightarrow \R^d$ is an affine function $g(\xx) = A\xx +\bb$, then $f \circ g$ is smooth with parameter $L \norm{A}^2$. \\
+\textbf{Sufficient decrease} Let $f : \R^d \rightarrow \R$ be differentiable and smooth with parameter $L$, and $\gamma = \frac{1}{L}$, then gradient descent satisfies: $f(\xx_{t+1}) \leq f(\xx_t) - \frac{1}{2L}\norm{\nabla f(\xx_t)}^2$. \\
+\textbf{Theorem}: The above yields $f(\xx_T) - f(\xx^*) \leq \frac{L}{2T}\norm{\xx_0 - \xx^*}^2$. Trick use vanilla analysis to bound the sum of $g_t$. \\
+\Title{Accelerated Gradient Descent}
+\begin{framed}
+    Choose $\zz_0 = \yy_0 = \xx_0$ arbitrary and: $\yy_{t+1} = \xx_t - \frac{1}{L}\nabla f(\xx_t)$, $\zz_{t+1} = z_t - \frac{t+1}{2L}\nabla f(\xx_t)$ and $\xx_{t+1} = \frac{t+1}{t+3}\yy_{t+1} + \frac{2}{t+3}\zz_{t+1}$. Idea: $y_t$ is a normal "smooth" step and $z_t$ is a more aggressive step. We perform a weighted average of these two steps.
+\end{framed}
+\textbf{Theorem}: Let $f : \R^d \rightarrow \R$ be convex and differentiable with a global minimum $\xx^*$; furthermore suppose that $f$ is smooth with parameter $L$. Accelerated gradient descent yields: $f(\yy_T) - f(\xx^*) \leq \frac{2L}{T(T+1)}\norm{\zz_0 - \xx^*}$. Trick: define a potential function $\Phi(t) = t(t+1)(f(\yy_t) - f(\xx^*)) + 2L \norm{\zz_t - \xx^*}^2$ and show that it is decreasing. \\
+\Title{Strongly convex functions} \\
+\begin{framed}
+    Let $f : \dom(f) \rightarrow \R$ be a convex and differentiable function, $X \subset \dom(f)$ convex and $\mu > 0$. $f$ is called \textbf{strongly convex} with parameter $\mu$ over $X$ if:
+    \begin{align*}
+        f(\yy) \geq f(\xx) + \nabla f(\xx)^T (\yy - \xx) + \frac{\mu}{2}\norm{\xx - \yy}^2
+    \end{align*}
+\end{framed}
+\textbf{Alternative characterisation of strong convexity}: Suppose that $\dom(f)$ is open and convex and that $f$ is differentiable then the following are equivalent:
+\begin{enumerate}[label=(\roman*), topsep=0pt,itemsep=0ex,partopsep=0ex,parsep=0ex]  
+    \itemsep0em
+    \item $f$ is strongly convex with parameter $\mu$.
+    \item $g(\xx) = f(\xx) - \frac{\mu}{2} \xx^T \xx$ is convex over $\dom(g) = \dom(f)$.
+\end{enumerate}
+\textbf{Theorem}: Let $f: \R^d \rightarrow \R$ be convex and differentiable. Suppose that $f$ is smooth with parameter $L$ and strongly convex with parameter $\mu$. Choose $\gamma = \frac{1}{L}$, then gradient descent satisfies:
+\begin{enumerate}[label=(\roman*), topsep=0pt,itemsep=0ex,partopsep=0ex,parsep=0ex]
+    \itemsep0em
+    \item Squared distances to $\xx^*$ are geometrically decreasing $\norm{\xx_{t+1} -\xx^*}^2 \leq \left(1 - \frac{\mu}{L}\right)\norm{\xx_t - \xx^*}^2$
+    \item The absolute error after $T$ iterations is exponentially small in $T$: $f(\xx_T) - f(\xx^*) \leq \frac{L}{2}\left(1 - \frac{\mu}{L}\right)^T \norm{x_0 - x^*}^2$
+\end{enumerate}
+Trick you can show using the vanilla analysis and the lower bound for $g_t$ from strong convexity that: $\norm{\xx_{t+1}- \xx^*}^2 \leq 2 \gamma (f(\xx^*) - f(\xx_t))+\gamma^2 \norm{\nabla f(\xx_t)}^2 + (1 - \mu \gamma)\norm{\xx_t - \xx^*}^2$, then use sufficient decrease. \\

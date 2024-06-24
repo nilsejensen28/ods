@@ -1,0 +1,41 @@
+\section{Quasi-Newton Methods}
+\Title{Motivation}
+The main computational bottleneck in Newton’s method is the computation and inversion of the Hessian matrix in each step. This matrix has size $d \times d$, so it will take up to $\BigO(d^3)$ time to invert it. \\
+In the one dimensional case we can approximate the derivative by its finite approximation and we get a \textbf{secant step}: $x_{t+1} = x_t - f(x_t)\frac{x_t - x_{t-1}}{f(x_t) - f(x_{t-1}}$. We can apply this to obtain a secant method for optimization: $x_{t+1} = x_t - f'(x_t) \frac{x_t - x_{t-1}}{f'(x_t) - f'(x_{t-1})}$. \\
+\Title{The secant condition}
+Our goal is to find $H_t$ that approximates $f''(x_t)$ and in the multidimensional case $\nabla^2 f(\xx_t)$. The \textbf{secant condition} is: $f'(x_t) - f'(x_{t-1})) = H_t (x_t - x_{t-1})$ and in the multidimensional case: $\nabla f(\xx_t) - \nabla f(\xx_{t-1}) = H_t(\xx_t - x_{t-1})$. \\
+The hope is that $H_t \approx \nabla^2 f(\xx_t)$. We say that we have a \textbf{Quasi-Newton method} if $H_t$ is a symmetric matrix, satisfying the secant condition. \\
+\Title{Greenstadt’s approach}
+For efficieny reasons (we want to avoid matrix inversions), Quasi-Newton methods typically directly deal with the inverse matrices $H_t^{-1}$. Suppose that we have $H_{t-1}^{-1}$ how do we choose $H_t^{-1}$? \\
+\textbf{Greenstadt's approach} is to update $H_{t-1}^{-1}$ by an \textbf{error matrix} $E_t$ to obtain $H_t^{-1} = H_{t-1}^{-1} + E_t$. Moreover the errors should be as small as possible subject to the constraint that $H_t^{-1}$ is symetric. \\
+We define the \textbf{Frobenius Norm} of a matrix $M$ as: $\norm{M}_F^2 = \sum_{i=1}^d{\sum_{j=1}^d{m_{i, j}}}$. \\
+Greenstadts approach is to minimize the error term $\norm{AEA^T}_F^2$ where $A$ is some fixed invertible transformation matrix $A$. If $A = I$ we recover the usual Frobenius norm. \\
+Let us fix $t$ and simplify the notation we set $H := H_{t-1}^{-1}$, $H' := H_t^{-1}$, $E := E_t$, $\ssigma := \xx_t - \xx_{t-1}$, $\yy = \nabla f(\xx_t) - \nabla f(\xx_{t-1})$, $\rr = \ssigma - H \yy$. \\
+The new \textbf{update formula} is now $H' = H + E$ and the \textbf{secant condition} is $H'\yy = \ssigma$ (or equivalently $E \yy = \rr$).
+\begin{framed}
+    Greenstadt's approach can now be summarized as a convex constrained optimization problem in $d^2$ variables $E_{i, j}$:
+    \begin{align*}
+        \text{minimize } &\frac{1}{2}\norm{AEA^T}_F^2 \\
+        \text{subject to} & E\yy = \rr, && E^T - E = 0
+    \end{align*}
+\end{framed}
+Such a system of equations can be solved using Lagrange multipliers. This yields the following result:\\
+\textbf{Theorem}: An update matrix $E^*$ satisfying the constraints $E\yy = \rr$ (secant condition in the next step) and $E^T - E = 0$ (symmetry) is a minimizer of the error function $f(E) = \frac{1}{2}\norm{AEA^T}_F^2$ subject to the aformentioned constraints if and only if there exists a vector $\mathbf{\lambda} \in \R^d$ and a matrix $\Gamma \in \R^{d \times d}$ such that $W E^* W = \mathbf{\lambda} \yy^T + \Gamma^T - \Gamma$, where $W = A^T A$ (a symetric and positive definite matrix). \\
+\Title{The Greenstadt family}
+The new goal is to solve the following system of equations:
+\begin{align*}
+        E \yy = \rr, && E^T - E = 0,  && W E W = \mathbf{\lambda} \yy^T + \Gamma^T - \Gamma
+\end{align*}
+which is a linear system over $E, \mathbf{\lambda}, \Gamma$. This yields: \\
+\begin{framed}
+    Let $M \in \R^{d \times d}$ be a symetric matrix and invertable matrix. Consider the quasi-Newton method: $\xx_{t+1} = \xx_t - H_t^{-1} \nabla f(\xx_t)$, where $H_0 = I$ and $H_t^{-1} = H_t^{-1} + E_t$ is chosen for all $t \geq 1$ in such a way that $H_t^{-1}$ is symmetric and satisfies the secant condition: $\nabla f(\xx_t) - \nabla f(\xx_{t-1}) = H_t (\xx_t - \xx_{t-1})$. For any $t$ set $H := H_{t-1}^{-1}$, $H' := H_t^{-1}$, $\ssigma := \xx_t - \xx_{t-1}$, $\yy := \nabla f(\xx_t) - \nabla f(\xx_{t-1})$, and define: 
+    \begin{align*}
+        E^* = \frac{1}{\yy^T M \yy}\Big(\ssigma &\yy^T M + M \yy \ssigma^T - H \yy \yy^T M - M \yy \yy^T H \\
+        &- \frac{1}{\yy^T M \yy}(\yy^T \ssigma - \yy^T H \yy)M \yy \yy^T M \Big)
+    \end{align*}
+    If the update matrix $E_t = E^*$ is used the method is call \textbf{Greenstadt method} with parameter $M$.
+\end{framed}
+\Title{The BFGS method}
+The \textbf{BFGS method} is a Greenstadt family method with $M = H'$, this means that $H'$ disappears from the formula, this yields: $ E^* = \frac{1}{\yy^T \ssigma}\left(-H\yy \ssigma^T - \ssigma \yy^T H + \left(1 + \frac{\yy^T H \yy}{\yy^T \ssigma}\ssigma \ssigma^T \right) \right)$. Because we don't need to compute any Hessian's the cost per iteration drops to $\BigO(d^2)$ \\
+Newton and Quasi-Newton methods are often performed with scaled steps. This means that the iteration becomes: $\xx_{t+1} = \xx_t - \alpha_t H_t^{-1} \nabla f(\xx_t)$, for some $\alpha_t \in \R^{+}$. 
+

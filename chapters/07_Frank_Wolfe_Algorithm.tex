@@ -1,0 +1,70 @@
+\section{Frank-Wolfe Algorithm}
+\textbf{Goal}: Solve problems of the form: minimize $f(\xx)$, subject to $\xx \in X$. \\
+\textbf{Problem}: projections onto a set $X$ can sometimes be very complex to compute, even in cases when the set is convex. Would it still be possible to solve constrained optimization problems using a gradient-based algorithm, but without any projection steps? \\
+\Title{The Algorithm} \\
+\begin{framed}
+    \textbf{Linear minimization oracle}: For the feasible region $X \subset \R^d$ and an arbritrary vector $\vecg \in \R^d$ (which we can think of as an optimization direction, we define $\lmo_X(\vecg) := \argmin_{\zz \in X}{\vecg^T \zz}$.
+\end{framed}
+\begin{framed}
+    The \textbf{Frank-Wolfe algorithm} proceeds iteratively, starting from an initial feasible point $\xx_0 \in X$, using a (time-dependent) stepsize $\gamma_t \in [0, 1]$.
+    \begin{align*}
+        \vecs := \lmo_X(\nabla f(\xx_t)) && \xx_{t+1} := (1 - \gamma_t)\xx_t + \gamma_t \vecs
+    \end{align*}
+\end{framed}
+The algorithm reduces non-linear constrained optimization to linear optimization over the same set $X$: It is able to solve general non-linear constrained optimization problems, by only solving a simpler linear constrained optimization over the same set $X$ in each iteration — that is the call to the linear minimization oracle $\lmo_X$. \\
+\textbf{Nice properties}: \textit{(i)} Iterates are always feasible, if the constraint set $X$ is convex. In other words, $\xx_0, \dots, \xx_t \in X$. \textit{(ii)} The algorithm is projection-free. Depending on the geometry of the constraint set $X$, the subproblem $\lmo_X$ is often easier to solve than a projection onto the same set $X$. Intuitively, this the case because $\lmo_X$ is only a linear problem, while a projection operation is a quadratic optimization problem. \textit{(iii)} The iterates always have a simple sparse representation: $\xx_t$ is always a convex combination of the initial iterate and the minimizers $\vecs$ used so far. \\
+\Title{Linear minimization oracles}
+The algorithm is particularly useful for cases when the constraint set $X$ can be described as a convex hull of a finite or otherwise “nice” set of points $\mathcal{A}$, formally $\conv(A) = X$. We call $\mathcal{A}$ the \textbf{atoms} describing the constraint set. In this case a solution to the linear subproblem $\lmo_X$ is always attained by an atom $\veca \in \mathcal{A}$. This is because every $\vecs \in \conv(X)$ is a convex combination $\vecs = \sum_{i=1}^n{\lambda_i \veca_i}$ of finitely many atoms ($\sum_{i=1}^n{\lambda_i}=1$, all $\lambda_i$ non-negative). It follows that for every $\vecg$ there is an atom such that $\vecg^t \vecs \geq \vecg^T \veca_i$. Hence, if $\vecs$ minimizes $\vecg^T \zz$, then there is also an atomic minimizer. \\
+The “optimal” set of atoms is the set of \textbf{extreme points}. A point $\xx \in X$ is extreme if
+$\xx \notin \conv(X \setminus \{\xx\})$. Such an extreme point must be in every set of atoms, but not every atom must be extreme. All that we require for A to be a set of atoms is that $\conv(\mathcal{A}) = X$. \\
+We define the \textbf{LASSO-Problem} in its standard (primal) form as: $\min_{\xx \in \R^d}{\norm{A\xx - \bb}^2}$ subject to $\norm{\xx}_1 \leq 1$. Here we observe that the constraint set $X = \{\xx \in \R^d  : \norm{\xx}_1 \leq 1\}$ is the unit $l_1$-ball, the convex hull of the unit basis vectors: $X = \conv(\{\pm \ee_1, \dots, \pm \ee_d\})$. Linear problems over the unit $l_1$-ball are easy to solve: For any direction $\vecg$, the minimizer can be chosen as one of the atoms (the unit basis vectors and their negatives): $\lmo_X(\vecg) = - \sgn(g_i)\ee_i$ with $i := \argmax_{i \in [d]}{\abs{g_i}}$. \\
+\Title{Duality gap} 
+Given $\xx \in X$ we define the \textbf{duality gap} (also known as Hearn Gap) at $\xx$ as:
+\begin{align*}
+    g(\xx) := \nabla f(\xx)^T (\xx - \vecs) && \text{for} && \vecs := \lmo_X(\nabla f(\xx))
+\end{align*}
+Suppose that the constrained minimization problem has a minimizer $\xx^*$. Let $\xx \in X$ then $g(\xx) \geq f(\xx) - f(\xx^*)$ meaning that the duality gap is an upper bound for the optimality gap. \\
+Note that we always have $g(\xx) \geq 0$. \\
+\Title{Convergence}
+\textbf{Assumptions}: We need to assume that the function f is smooth, but unlike for gradient descent, the stepsize can be chosen independently from the smoothness parameter. \\
+For a closed and bounded set $X$ we define the \textbf{diameter} of $X$ as $\diam(X) = \max_{\xx, \yy \in X}{\norm{\xx -\yy}}$. \\
+\textbf{Convergence result}: Consider the constrained minimization problem where $f : \R^d \rightarrow \R$ is convex and smooth with parameter $L$, and $X$ is convex, closed and bounded (in particular, a minimizer $\xx^*$ of $f$ over $X$ exists, and all linear minimization oracles have minimizers). With any $\xx_0 \in X$, and with stepsizes $\gamma_t = \frac{2}{t+2}$, the Frank-Wolfe algorithm yields:
+\begin{align*}
+    f(\xx_T) - f(\xx^*) \leq \frac{2L \diam(X)}{T+1}
+\end{align*}
+The proof uses that for a step $\xx_{t+1} = \xx_t + \gamma_t(\vecs - \xx_t)$ with stepsize $\gamma_t \in [0, 1]$ it holds that: $f(\xx_{t+1}) \leq f(\xx_t) - \gamma_t g(\xx_t) + \gamma_t^2 \frac{L}{2}\norm{\vecs - \xx_t}^2$, where $\vecs = \lmo_X(\nabla f(\xx_t))$. Then use duality gap and induction. \\
+The same proof idea also holds for other stepsizes: \\
+\textbf{Line search stepsize}: Here, $\gamma_t \in [0, 1]$ is chosen such that the progress in $f$-value (and hence also in $h$-value) is maximized: $\gamma_t := \argmin_{\gamma \in [0, 1]}{f((1-\gamma) \xx_t + \gamma \vecs)}$. If $\yy_{t+1}$ is the iterate obtained with standard stepsize $\mu_t$ then we get: $h(\xx_{t+1}) \leq h(\yy_{t+1}) \leq (1 - \mu_t)h(\xx_t) + \mu_t^2 \frac{L}{2} \diam(X)$. \\
+\textbf{Gap-based stepsize}: We choose $\gamma_t = \min \left( \frac{g(\xx_t)}{L\norm{\vecs - \xx_t}^2}, 1\right)$, this yields: $h(\xx_{t+1}) \leq (1 - \mu_t) h(\xx_t) + \mu_t^2 \frac{L}{2}\diam(X)$. \\
+\Title{Affine invariance}
+We call two problems $(f, X)$ and $(f', X')$ \textbf{affinely equivalent} if $f'(\xx) = f(A\xx + \bb)$ for some invertable matrix $A$ and some vector $\bb$ and $X' = \{A^{-1}(\xx - \bb): \xx \in X\}$. \\
+The Frank-Wolfe Algorithm will incure the same optimization error on two affinely equivalent functions. Hence a good analysis of the Frank-Wolfe algorithm should provide a bound that is invariant under affine transformations, \\
+\Title{Curvature Constant}
+\begin{framed}
+    We define the \textbf{curvature constant} of the constrained optimization problem as:
+    \begin{align*}
+        C_{(f, X)} := \sup_{\xx, \vecs \in X, \gamma \in [0, 1], \atop \yy = (1-\gamma)\xx + \gamma \vecs}{\frac{1}{\gamma^2}(f(\yy) - f(\xx) - \nabla f(\xx)^T (\yy - \xx))}
+    \end{align*}
+    The curvature constant is affine invariant.
+\end{framed}
+Note that $d(\yy) := f(\yy) - f(\xx) - \nabla f(\xx)^T (\yy - \xx)$ is the pointwise vertical distance between the graph of $f$ and its linear approximation at $\xx$. By convexity, $d(\yy) \geq 0$ for all $\yy \in X$. For $\yy$ resulting from $\xx$ by a Frank-Wolfe step with stepsize $\gamma$, we normalize the vertical distance with $\gamma^2$ (a natural choice if we think of $f$ as being smooth), and take the supremum over all possible such normalized vertical distances. \\
+The convergence rate of the Frank-Wolfe algorithm can be described purely in terms of this quantity, without resorting to any smoothness constants $L$ or diameters $\diam(X)$, which are not smooth. \\
+\textbf{Theorem}: Consider the constrained minimization problem where $f : \R^d \rightarrow \R$ is convex and $X$ is convex, closed and bounded. Let $C_{(f, X)}$ be the curvature constant of $f$ over $X$. With any $\xx_0 \in X$ and stepsizes $\gamma_t = \frac{2}{t+2}$ the Frank-Wolfe Algorithm yields: $f(\xx_t) - f(\xx^*= \leq \frac{4 C_{(f, X)}}{T+1}$. Trick: we proceed as before but we show $f(\xx_{t+1}) \leq f(\xx_t) - \nabla f(\xx_t)^T \gamma_t (\xx_t - \vecs) + \gamma_t^2 C_{(f, X)}$. \\
+\textbf{Lemma}: Let $f$ be convex and smooth with parameter $L$ over $X$, then: $C_{(f, X)} \leq \frac{L}{2} \diam(X)^2$. \\
+\Title{Convergence in duality gap} \\
+\textbf{Theorem}: Let $f : \R^d \rightarrow \R$ be a convex and smooth with parameter $L$ and $\xx_0 \in X$, $T \geq 2$, then choosing any of the previously discussed stepsizes, the Frank-Wolfe algorithm yields at $t$, $1 \leq t \leq T$ such that: $g(\xx_t) \leq \frac{27 / 2 \cdot C_{(f, X)}}{T+1}$. \\
+\Title{Sparsity}:
+The previous results means that $\BigO(\frac{1}{\epsilon})$ many iterations are sufficent to obtain optimality gap at most $\epsilon$. At this time, the current solution is a convex combination of $\xx_0$ and $\BigO(\frac{1}{\epsilon})$ many atoms of the constraint set $X$. Thinking of $\epsilon$ as a constant (such as 0.01), this means that constantly many atoms are sufficient in order to get an almost optimal solution. \\
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+\begin{center}
+    \begin{tabular}{ |P{6em}|P{7em}|P{1em}|P{1em}|P{10em}| } 
+        \hline
+        Example & $\mathcal{A}$ & $\abs{\mathcal{A}}$ & dim & $\lmo_X(\vecg)$ \\
+        \hline
+        $l_1$-Ball & $\{\pm \ee_i\}$ & $2d$ & $d$ & $\pm \ee_i$ with $\argmax_i{\abs{g_i}}$ \\
+        Simplex & $\{\ee_i\}$ & $d$ & $d$ & $\ee_i$ with $\argmin_i{g_i}$ \\
+        Spectahedron & $\{\xx \xx^T, \norm{x}=1 \}$ & $\infty$ & $d^2$ & $\argmin_{\norm{\xx}=1}{\xx^T G \xx}$ \\
+        Norms & $\{\xx, \norm{\xx} \leq 1 \}$ & $\infty$ & $d$ & $\argmin_{\norm{\vecs} \leq 1}{\langle \vecs, \vecg \rangle}$ \\
+        \hline
+    \end{tabular}
+\end{center}

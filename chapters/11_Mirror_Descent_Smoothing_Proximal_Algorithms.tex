@@ -1,0 +1,40 @@
+\section{Mirror Descent, Smoothing, Proximal Algorithms}
+\begin{framed}
+    Let $\omega : X \rightarrow \R$ be a function that is strictly convex, continuously differentiable on a closed convex set X. The \textbf{Bregman divergence} is defined as $V_{\omega}(\xx, \yy) := \omega(\xx) - \omega(\yy) - \nabla \omega(\yy)^T (\xx - \yy)$, $\forall \xx, \yy \in X$. Note that this is not a valid distance function!
+\end{framed}
+\textbf{Generalized Pythagorean Theorem}: If $\xx^*$ is the Bregman projection of $\xx_0$ onto a convex set $C \subset X$: $\xx^* = \argmin_{\xx \in C}{V_{\omega}(\xx, \xx_0)}$. Then for all $\yy \in C$ it holds that: $V_{\omega}(\yy, \xx_0) \geq V_{\omega}(\yy, \xx^*) + V_{\omega}(\xx^*, \xx_0)$. \\
+\Title{Mirror Descent}
+\begin{framed}
+    Given an input $\xx$ and vector $\xxi$, we will define the \textbf{prox-mapping}: $\prox_{\xx}(\xxi) = \argmin_{\uu \in X}\{V_{\omega}(\uu + \xx) + \langle \xxi, \uu \rangle \}$, where the distance-generating function $\omega(\cdot)$ is 1-strongly convex with respect to the norm $\norm{\cdot}$ on $X$. \\
+    The \textbf{Mirror descent algorithm} adopts the update step $\xx_{t+1} = \prox_{\xx_t}(\gamma_t \vecg_t)$, with $\vecg_t \in \partial f(\xx_t)$.
+\end{framed}
+Note that if $\omega(\xx) = \frac{1}{2}\norm{x}_2^2$, and $\norm{\cdot} = \norm{\cdot}_2$, then mirror descent reduces to subgradient descent. \\
+\textbf{Three point identity}: For any $\xx, \yy, \zz \in \dom(\omega)$: $V_{\omega}(\xx, \zz) = V_{\omega}(\xx, \yy) + V_{\omega}(\yy, \zz) - \langle \nabla \omega(\zz) - \nabla \omega(\yy), \xx - \yy \rangle$. \\
+We define the \textbf{dual norm} of $\norm{\cdot}$ as $\norm{\xx}_* = \sup \{ \xx^T \zz : \norm{\zz} \leq 1\}$. We then have \textbf{Young's inequality}: $\xx^T \yy \leq \frac{\norm{\xx}^2}{2} + \frac{\norm{\yy}_*^2}{2}$. \\
+\textbf{Convergence result}: For Mirror descent let $f$ be convex and $\omega(\cdot)$ be 1-strongly convex on $X$ with respect to $\norm{\cdot}$, then: $\min_{1 \leq t \leq T}{f(\xx_t) - f^*} \leq \frac{V_{\omega}(\xx^*, \xx_1) + 0.5 \cdot \sum_{t=1}^T{\gamma_t^2 \norm{\vecg_t}_*^2}}{\sum_{t=1}^T{\gamma_t}}$, and $ f\left( \frac{\sum_{t=1}^T{\gamma_t \xx_t}}{\sum_{t=1}^T{\gamma_t}}\right)\leq \frac{V_{\omega}(\xx^*, \xx_1) + 0.5 \cdot \sum_{t=1}^T{\gamma_t^2 \norm{\vecg_t}_*^2}}{\sum_{t=1}^T{\gamma_t}}$. Trick: Show that $\langle \gamma_t \vecg_t, \xx_t - \xx^* \rangle \leq V_{\omega}(\xx^*, \xx_t) - V_{\omega}(\xx^*, \xx_{t+1}) + \frac{\gamma_t^2}{2} \norm{\vecg_t}_*^2$, using \textbf{optimality condition}: $\langle \nabla \omega(\xx_{t+1}) + \gamma_t \vecg_t - \nabla \omega(\xx_t), \xx - \xx_{t+1} \rangle \geq 0$. \\
+\Title{Convex Conjugate Theory} For a function $f : \dom(f) \rightarrow \R$ its \textbf{convex conjugate} is given by $f^*( \yy) = \sup_{\xx \in \dom(f)}\{\xx^T \yy - f(\xx)\}$. This is also known as \textbf{Legendre-Fenchel} transformation. $f^*$ will always be convex (even if $f$ is not). \\
+\textbf{Fenchel's inequality} follows easily: $\xx^T \yy \leq f(\xx) + f^*(\yy)$, $\forall \xx, \yy$.
+\textbf{Lemma}: If function $f$ is convex, lower semi-continuous and proper, then $(f^*)^* = f$. Here lower semi-continuity means that $\lim \inf_{\xx \rightarrow \xx_0} f(\xx) \geq f(\xx_0)$. \\
+\textbf{Theorem}: If $f$ is $\mu$-strongly convex then $f^*$ is continuously differentiable and $\frac{1}{\mu}$-Lipschitz smooth. \\
+\textbf{Lemma}: Let $f$ and $g$ be two proper, convex and semi-continuous functions, then \textit{(i)} $(f+g)^*(\xx) = \inf_{\yy}\{f^*(\yy) + g^*(\xx - \yy)\}$ and \textit{(ii)} $(\alpha f)^*(\xx) = \alpha f^*(\frac{\xx}{\alpha})$, for $\alpha > 0$. \\
+\Title{Smoothing Techniques}
+\textbf{Goal:} Approximate a non-smooth function $f$ by a smooth and convex function $f_{\mu}$. \\
+\textbf{Nestorov Smoothing}: We approximate $f(\xx)$, with $f_{\mu}(\xx) = \max_{\yy \in \dom(f^*)}\{\xx^T \yy - f^*(\yy) - \mu \cdot d(\yy)\}$, where $f^*$ is the convex conjugate of $f$ and $d(\yy)$ is some proximity function. Notice that $f_{\mu} = (f^* + \mu d)^*$, hence $f_{\mu}$ is continuously differentiable and Lipschitz-smooth. \\
+The \textbf{proximity function} should satisfy \textit{(i)} $d(\yy)$ is continuous and 1-strongly convex $Y$; \textit{(ii)} $d(\yy_0) = 0$, for $\yy_0 \in \argmin_{\yy \in Y}{d(\yy)}$; \textit{(iii)} $d(\yy) \geq 0$, $\forall \yy \in Y$. \\
+We consider the case where $f$ can be represented as $f(\xx) = \max_{\yy \in Y} \{\langle A \xx + \bb, \yy \rangle - \phi(\yy)\}$, with $\phi(\yy)$ being a convex and continuous function and $Y$ a convex and compact set. This generalizes the Fenchel representation. The Nesterov smoothing then reduces to $f_{\mu}(\xx) = \max_{\yy \in Y}\{\langle A\xx + \bb, \yy \rangle - \phi(\yy) - \mu d(\yy) \}$.
+\textbf{Theoretical Guarantees}: For $f_{\mu}(\xx)$ we have: \textit{(i)} $f_{\mu}(\xx)$ is continuously differentiable; \textit{(ii)} $\nabla f_{\mu}(\xx) = A^T y(\xx)$, where $y(\xx) = \argmax_{\yy \in Y}\{\langle A \xx + \bb, \yy \rangle - \phi(\yy) - \mu d(\yy) \}$; \textit{(iii)} $f_{\mu}(x)$ is $\frac{\norm{A}_2^2}{\mu}$-Lipschitz smooth with $\norm{A}_2 := \max_{\xx : \norm{\xx}=1}\norm{A\xx}_2$. \\
+\textbf{Convergence}: For any $\mu > 0$, let $D_Y^2 = \max_{\yy \in Y}{d(\yy)}$ we have: $f(\xx) - \mu D_Y^2 \leq f_{\mu} \leq f(\xx)$. \\
+\textbf{Moreau-Yosida Regularization}: We consider the following approximation function: $f_{\mu}(\xx) = \min_{\yy \in \dom(f)} \{f(\yy) + \frac{1}{2\mu}\norm{\xx - \yy}_2^2\}$, where $\mu > 0$ is the smoothness parameter. $f_{\mu}$ is also called the Moreau envolope of $f$. \\
+For a convex function $f$ we define the \textbf{proximal operator} of $f$ at a given point $\xx$ as: $\prox_f(\xx) := \argmin_{\yy}\{f(\yy) +  \frac{1}{2}\norm{\xx - \yy}^2 \}$. We immediately notice that for $\mu > 0$,we have: $\prox_{\mu f}(\xx) = \argmin_{\yy} \{f(\yy) + \frac{1}{2 \mu}\norm{\xx - \yy}^2  \}$.
+\textbf{Properties}: Let $f$ be a convex function, then we have:
+\begin{enumerate}[label=(\roman*), topsep=0pt,itemsep=0ex,partopsep=0ex,parsep=0ex] 
+    \itemsep0em
+    \item Fixed Point: A point $\xx^*$ minimizes $f$ if and only if $\xx^* = \prox_f(\xx^*)$.
+    \item Non-Expansiveness: $\norm{\prox_f(\xx) - \prox_f(\yy)} \leq \norm{\xx - \yy}$.
+    \item Moreau Decomposition: For any $\xx$: $\xx = \prox_f(\xx) + \prox_{f^*}(\xx)$.
+\end{enumerate}
+\textbf{Danskin's theorem}: The gradient of $f_{\mu}$ is given by $\nabla f_{\mu}(\xx) = \frac{1}{\mu}(\xx - \prox_{\mu f}(\xx))$. \\
+Since $f_{\mu}$ is $\frac{1}{\mu}$-smooth, gradient descent for the smoothed function works as
+follows $\xx_{t+1} = \xx_t - \mu \nabla f_{\mu}(\xx_t)$, which we can rewrite as $\xx_{t+1} = \prox_{\mu f}(\xx_t)$, which is known as \textbf{proximal point algorithm}. We can also change the step size in every iteration which yields: $\xx_{t+1} = \prox_{\gamma_t f}(\xx_t)$ \\
+\textbf{Convergence result}: Let $f$ be a convex function, the proximal point algorithm satisfies $f(\xx_t) - f^* \leq \frac{\norm{\xx_0 - \xx^*}_2^2}{2 \sum_{\tau=0}^{t-1}{\gamma_{\tau}}}$. \\
+\textbf{Randomized smoothing}: The randomized smoothing paradigm uses the following function to approximate $f$: $f_{\mu}(\xx) = \E_Z [f(\xx + \mu Z) ]$, where $Z$ is an isotropic Gaussian or uniform random variable.\\
